@@ -2,6 +2,7 @@
 // this code should be used in conjunction with the Preliminary Material
 // written by the AQA Programmer Team
 // developed using Visual Studio 2015
+// Version 1.2 released March 2018
 
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,9 @@ namespace WordsCS
     {
         class QueueOfTiles
         {
-            private List<string> Contents = new List<string>();
-            private int Rear;
-            private int MaxSize;
+            protected List<string> Contents = new List<string>();
+            protected int Rear;
+            protected int MaxSize;
             Random Rnd = new Random();
 
             public QueueOfTiles(int MaxSize)
@@ -67,12 +68,9 @@ namespace WordsCS
                 int RandNo = 0;
                 if (Rear < MaxSize - 1)
                 {
-                    RandNo = Rnd.Next(0, 27);
+                    RandNo = Rnd.Next(0, 26);
                     Rear++;
-                    if (RandNo == 27)
-                        Contents[Rear] = "*";
-                    else
-                        Contents[Rear] = Convert.ToChar(65 + RandNo).ToString();
+                    Contents[Rear] = Convert.ToChar(65 + RandNo).ToString();
                 }
             }
 
@@ -112,7 +110,6 @@ namespace WordsCS
                 DisplayMenu();
                 Console.Write("Enter your choice: ");
                 Choice = Console.ReadLine();
-
                 if (Choice == "1")
                 {
                     PlayGame(AllowedWords, TileDictionary, true, StartHandSize, MaxHandSize, MaxTilesPlayed, NoOfEndOfTurnTiles);
@@ -121,77 +118,7 @@ namespace WordsCS
                 {
                     PlayGame(AllowedWords, TileDictionary, false, 15, MaxHandSize, MaxTilesPlayed, NoOfEndOfTurnTiles);
                 }
-            }
-        }
-
-        struct LeaderboardRanking
-        {
-            public string name;
-            public int score;
-        }
-
-        private static void SavePlayerScore(string name, int score)
-        {
-            if (name == "")
-            {
-                while (name == "")
-                {
-                    Console.WriteLine("Please enter a valid name.");
-                    name = Console.ReadLine();
-                }
-            }
-
-            name = name.ToUpper();
-
-            using (StreamWriter file = new StreamWriter("highscores.txt", append: true))
-            {
-                file.WriteLine($"{name}:{score}");
-                file.Close();
-            }
-        }
-
-        private static void DisplayLeaderboard()
-        {
-            Console.WriteLine();
-            Console.WriteLine("==========");
-            Console.WriteLine("LEADERBOARD");
-            Console.WriteLine("==========");
-            Console.WriteLine();
-
-            /*
-                The using keyword means 'fileRead' is immediately disposed
-                when it is finished being used.
-             */
-            using (StreamReader fileRead = new StreamReader("highscores.txt"))
-            {
-                List<LeaderboardRanking> leaderboard = new List<LeaderboardRanking>();
-                string line;
-
-                // While there are still unread lines...
-                while ((line = fileRead.ReadLine()) != null)
-                {
-                    string[] output = line.Split(':');
-                    LeaderboardRanking ranking = new LeaderboardRanking();
-                    ranking.name = output[0];
-                    ranking.score = Int32.Parse(output[1]);
-                    leaderboard.Add(ranking);
-                }
-
-                leaderboard.Sort(delegate (LeaderboardRanking x, LeaderboardRanking y)
-                {
-                    return y.score.CompareTo(x.score);
-                });
-
-                for (int i = 0; i < leaderboard.Count; i++)
-                {
-                    LeaderboardRanking ranking = leaderboard[i];
-                    Console.WriteLine($"#{i + 1} : {ranking.name} - {ranking.score}");
-
-                    if (i == 9) break;
-                }
-
-                fileRead.Close();
-            }
+            }   
         }
 
         private static void CreateTileDictionary(ref Dictionary<char, int> TileDictionary)
@@ -248,25 +175,15 @@ namespace WordsCS
             try
             {
                 StreamReader FileReader = new StreamReader("aqawords.txt");
-
                 while (!FileReader.EndOfStream)
                 {
                     AllowedWords.Add(FileReader.ReadLine().Trim().ToUpper());
                 }
-
                 FileReader.Close();
-            }
-            catch (FileNotFoundException)
-            {
-                throw new FileNotFoundException("The AQA Words dictionary file (aqawords.txt) could not be found in the program directory.");
-            }
-            catch (IOException)
-            {
-                throw new IOException("The provided AQA words dictionary file (aqawords.txt) could not be read.");
             }
             catch (Exception)
             {
-                throw new Exception("A critical error has occured.");
+                AllowedWords.Clear();
             }
         }
 
@@ -503,12 +420,6 @@ namespace WordsCS
             Console.WriteLine();
         }
 
-        struct GameResults
-        {
-            public int playerOneScore;
-            public int playerTwoScore;
-        }
-
         private static void PlayGame(List<string> AllowedWords, Dictionary<char, int> TileDictionary, bool RandomStart, int StartHandSize, int MaxHandSize, int MaxTilesPlayed, int NoOfEndOfTurnTiles)
         {
             int PlayerOneScore = 50;
@@ -518,7 +429,6 @@ namespace WordsCS
             string PlayerOneTiles = "";
             string PlayerTwoTiles = "";
             QueueOfTiles TileQueue = new QueueOfTiles(20);
-
             if (RandomStart)
             {
                 PlayerOneTiles = GetStartingHand(TileQueue, StartHandSize);
@@ -529,7 +439,6 @@ namespace WordsCS
                 PlayerOneTiles = "BTAHANDENONSARJ";
                 PlayerTwoTiles = "CELZXIOTNESMUAA";
             }
-
             while (PlayerOneTilesPlayed <= MaxTilesPlayed && PlayerTwoTilesPlayed <= MaxTilesPlayed && PlayerOneTiles.Length < MaxHandSize && PlayerTwoTiles.Length < MaxHandSize)
             {
                 HaveTurn("Player One", ref PlayerOneTiles, ref PlayerOneTilesPlayed, ref PlayerOneScore, TileDictionary, ref TileQueue, AllowedWords, MaxHandSize, NoOfEndOfTurnTiles);
@@ -539,22 +448,9 @@ namespace WordsCS
                 Console.WriteLine();
                 HaveTurn("Player Two", ref PlayerTwoTiles, ref PlayerTwoTilesPlayed, ref PlayerTwoScore, TileDictionary, ref TileQueue, AllowedWords, MaxHandSize, NoOfEndOfTurnTiles);
             }
-
             UpdateScoreWithPenalty(ref PlayerOneScore, PlayerOneTiles, TileDictionary);
             UpdateScoreWithPenalty(ref PlayerTwoScore, PlayerTwoTiles, TileDictionary);
             DisplayWinner(PlayerOneScore, PlayerTwoScore);
-
-            // When game is finished...
-            Console.Write("What was Player 1's name?: ");
-            string player1Name = Console.ReadLine();
-            SavePlayerScore(player1Name, PlayerOneScore);
-
-            Console.Write("What was Player 2's name?: ");
-            string player2Name = Console.ReadLine();
-            SavePlayerScore(player2Name, PlayerTwoScore);
-
-            DisplayLeaderboard();
-            Console.ReadKey();
         }
 
         private static void DisplayMenu()
