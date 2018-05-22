@@ -1,0 +1,7 @@
+C:\Users\Jordan\Desktop\SkeletonCode\SkeletonCode\bin\Debug\SkeletonCode.exe.config
+C:\Users\Jordan\Desktop\SkeletonCode\SkeletonCode\bin\Debug\SkeletonCode.exe
+C:\Users\Jordan\Desktop\SkeletonCode\SkeletonCode\bin\Debug\SkeletonCode.pdb
+C:\Users\Jordan\Desktop\SkeletonCode\SkeletonCode\obj\Debug\SkeletonCode.csprojAssemblyReference.cache
+C:\Users\Jordan\Desktop\SkeletonCode\SkeletonCode\obj\Debug\SkeletonCode.csproj.CoreCompileInputs.cache
+C:\Users\Jordan\Desktop\SkeletonCode\SkeletonCode\obj\Debug\SkeletonCode.exe
+C:\Users\Jordan\Desktop\SkeletonCode\SkeletonCode\obj\Debug\SkeletonCode.pdb
